@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merry Christmas My Cutiepie</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            overflow: hidden; /* Prevent scroll on body, handle in app */
+        }
+        
+        .font-christmas {
+            font-family: 'Mountains of Christmas', cursive;
+        }
+
+        /* Snow Animation */
+        #snow-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Card Flip Animation */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        
+        .backface-hidden {
+            backface-visibility: hidden;
+        }
+        
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+
+        .card-inner {
+            transition: transform 0.6s;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        /* Custom Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes bounce-soft {
+            0%, 100% { transform: translateY(-5%); }
+            50% { transform: translateY(0); }
+        }
+
+        .animate-bounce-soft {
+            animation: bounce-soft 2s infinite;
+        }
+
+        @keyframes pulse-scale {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .animate-pulse-scale {
+            animation: pulse-scale 2s infinite;
+        }
+
+        /* Background Gradient */
+        .bg-grad {
+            background: linear-gradient(135deg, #e0f7fa 0%, #e1bee7 100%);
+        }
+
+        /* Page Transition Classes */
+        .page {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            opacity: 0;
+            pointer-events: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+        }
+
+        .page.active {
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 10;
+        }
+
+        .page.hidden-page {
+            display: none;
+        }
+
+        /* Cute Grid Background */
+        .bg-grid-pattern {
+            background-color: #ffffff;
+            background-image: 
+                linear-gradient(#e5e7eb 1px, transparent 1px),
+                linear-gradient(90deg, #e5e7eb 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* Custom Scrollbar for letter */
+        .letter-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .letter-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        .letter-scroll::-webkit-scrollbar-thumb {
+            background: #fca5a5; 
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex justify-center items-center bg-blue-50">
+
+    <!-- Snow Effect Canvas -->
+    <canvas id="snow-canvas"></canvas>
+
+    <!-- Main App Container (Mobile Aspect Ratio) -->
+    <div class="relative w-full h-full md:w-[400px] md:h-[750px] bg-white md:rounded-3xl shadow-2xl overflow-hidden bg-grid-pattern border-4 border-white ring-4 ring-blue-100">
+        
+        <!-- ================= PAGE 1: INTRO ================= -->
+        <div id="page-1" class="page active">
+            <div class="text-center w-full px-8 relative z-10">
+                <h1 class="font-christmas text-5xl text-gray-800 mb-8 drop-shadow-sm">For someone<br>special</h1>
+                
+                <div class="relative inline-block cursor-pointer group" onclick="goToPage(2)">
+                    <!-- Speech Bubble -->
+                    <div class="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-white px-4 py-2 rounded-full shadow-lg border border-pink-100 animate-bounce-soft whitespace-nowrap z-20">
+                        <span class="text-pink-500 font-bold text-lg">Tap me!</span>
+                        <div class="absolute bottom-[-6px] left-1/2 transform -translate-x-1/2 w-3 h-3 bg-white rotate-45 border-b border-r border-pink-100"></div>
+                    </div>
+
+                    <!-- Gift Box SVG -->
+                    <div class="w-48 h-48 mx-auto animate-pulse-scale transition-transform duration-300 group-hover:scale-110">
+                        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Box Body -->
+                            <rect x="40" y="80" width="120" height="100" rx="5" fill="#ef4444" />
+                            <rect x="40" y="80" width="120" height="100" rx="5" fill="url(#giftGradient)" opacity="0.8"/>
+                            <!-- Lid -->
+                            <rect x="30" y="60" width="140" height="30" rx="3" fill="#dc2626" />
+                            <!-- Ribbon Vertical -->
+                            <rect x="90" y="60" width="20" height="120" fill="#fbbf24" />
+                            <!-- Ribbon Horizontal (Lid) -->
+                            <rect x="90" y="60" width="20" height="30" fill="#fcd34d" />
+                            <!-- Bow -->
+                            <path d="M100 60 C 80 30, 40 60, 90 65 C 40 70, 80 100, 100 70 C 120 100, 160 70, 110 65 C 160 60, 120 30, 100 60" fill="#fbbf24" stroke="#f59e0b" stroke-width="2"/>
+                            
+                            <defs>
+                                <linearGradient id="giftGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#fca5a5;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 2: SNOWMAN ================= -->
+        <div id="page-2" class="page">
+            <div class="text-center w-full px-6 flex flex-col items-center">
+                <!-- Cute Snowman SVG -->
+                <div class="w-64 h-64 mb-6 animate-float">
+                    <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Bottom Snowball -->
+                        <circle cx="100" cy="180" r="50" fill="#f3f4f6" stroke="#d1d5db" stroke-width="2"/>
+                        <!-- Middle Snowball -->
+                        <circle cx="100" cy="110" r="40" fill="#f9fafb" stroke="#d1d5db" stroke-width="2"/>
+                        <!-- Head -->
+                        <circle cx="100" cy="50" r="30" fill="#ffffff" stroke="#d1d5db" stroke-width="2"/>
+                        
+                        <!-- Eyes -->
+                        <circle cx="90" cy="45" r="3" fill="#1f2937"/>
+                        <circle cx="110" cy="45" r="3" fill="#1f2937"/>
+                        <!-- Nose -->
+                        <path d="M100 50 L120 55 L100 60 Z" fill="#f97316"/>
+                        <!-- Smile -->
+                        <path d="M90 60 Q100 70 110 60" fill="none" stroke="#1f2937" stroke-width="2" stroke-linecap="round"/>
+                        
+                        <!-- Buttons -->
+                        <circle cx="100" cy="95" r="3" fill="#ef4444"/>
+                        <circle cx="100" cy="110" r="3" fill="#3b82f6"/>
+                        <circle cx="100" cy="125" r="3" fill="#10b981"/>
+
+                        <!-- Scarf -->
+                        <path d="M80 75 Q100 90 120 75" fill="none" stroke="#ef4444" stroke-width="12" stroke-linecap="round"/>
+                        <path d="M110 80 L120 120" fill="none" stroke="#ef4444" stroke-width="10" stroke-linecap="round"/>
+
+                        <!-- Hat -->
+                        <rect x="75" y="15" width="50" height="10" fill="#111827"/>
+                        <rect x="85" y="-15" width="30" height="30" fill="#111827"/>
+                        <rect x="85" y="10" width="30" height="5" fill="#ef4444"/>
+
+                        <!-- Arms -->
+                        <path d="M60 110 Q40 90 30 70" fill="none" stroke="#92400e" stroke-width="3"/>
+                        <path d="M140 110 Q160 90 170 70" fill="none" stroke="#92400e" stroke-width="3"/>
+                        
+                        <!-- Mittens -->
+                        <circle cx="30" cy="70" r="6" fill="#3b82f6"/>
+                        <circle cx="170" cy="70" r="6" fill="#3b82f6"/>
+                    </svg>
+                </div>
+
+                <h2 class="font-christmas text-4xl text-gray-800 mb-2 leading-tight">This Christmas,</h2>
+                <p class="text-xl text-gray-600 mb-8 font-semibold">something special for you</p>
+
+                <button onclick="goToPage(3)" class="bg-blue-500 hover:bg-blue-600 text-white text-xl font-bold py-3 px-10 rounded-full shadow-lg transform transition hover:scale-105 active:scale-95 flex items-center gap-2">
+                    <span>Open it</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 3: POLAROIDS ================= -->
+        <div id="page-3" class="page">
+            <div class="w-full h-full flex flex-col items-center justify-center px-4">
+                <h2 class="font-christmas text-4xl text-gray-800 mb-1">Just for you</h2>
+                <p class="text-gray-500 italic mb-8">I don't need a gift, because...</p>
+
+                <!-- Grid Layout for Cards -->
+                <!-- Top Row: 3 cards -->
+                <div class="grid grid-cols-3 gap-3 mb-4 w-full max-w-[340px]">
+                    <div class="card w-full aspect-[3/4] cursor-pointer perspective-1000 group" onclick="flipCard(this, 0)">
+                        <div class="card-inner w-full h-full relative transform-style-3d shadow-lg rounded-lg">
+                            <div class="card-front absolute w-full h-full bg-white p-2 backface-hidden rounded-lg border flex items-center justify-center">
+                                <div class="w-full h-full border border-gray-100 bg-pink-50 rounded flex items-center justify-center">
+                                    <span class="text-2xl">❤️</span>
+                                </div>
+                            </div>
+                            <div class="card-back absolute w-full h-full bg-pink-100 rotate-y-180 backface-hidden rounded-lg border border-pink-200 flex items-center justify-center">
+                                <span class="font-bold text-gray-800 text-lg sm:text-xl">You</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card w-full aspect-[3/4] cursor-pointer perspective-1000 group" onclick="flipCard(this, 1)">
+                        <div class="card-inner w-full h-full relative transform-style-3d shadow-lg rounded-lg">
+                            <div class="card-front absolute w-full h-full bg-white p-2 backface-hidden rounded-lg border flex items-center justify-center">
+                                <div class="w-full h-full border border-gray-100 bg-pink-50 rounded flex items-center justify-center">
+                                    <span class="text-2xl">❤️</span>
+                                </div>
+                            </div>
+                            <div class="card-back absolute w-full h-full bg-pink-100 rotate-y-180 backface-hidden rounded-lg border border-pink-200 flex items-center justify-center">
+                                <span class="font-bold text-gray-800 text-lg sm:text-xl">are</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card w-full aspect-[3/4] cursor-pointer perspective-1000 group" onclick="flipCard(this, 2)">
+                        <div class="card-inner w-full h-full relative transform-style-3d shadow-lg rounded-lg">
+                            <div class="card-front absolute w-full h-full bg-white p-2 backface-hidden rounded-lg border flex items-center justify-center">
+                                <div class="w-full h-full border border-gray-100 bg-pink-50 rounded flex items-center justify-center">
+                                    <span class="text-2xl">❤️</span>
+                                </div>
+                            </div>
+                            <div class="card-back absolute w-full h-full bg-pink-100 rotate-y-180 backface-hidden rounded-lg border border-pink-200 flex items-center justify-center">
+                                <span class="font-bold text-gray-800 text-lg sm:text-xl">my</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Row: 2 cards centered -->
+                <div class="grid grid-cols-2 gap-4 w-2/3 max-w-[220px]">
+                    <div class="card w-full aspect-[3/4] cursor-pointer perspective-1000 group" onclick="flipCard(this, 3)">
+                        <div class="card-inner w-full h-full relative transform-style-3d shadow-lg rounded-lg">
+                            <div class="card-front absolute w-full h-full bg-white p-2 backface-hidden rounded-lg border flex items-center justify-center">
+                                <div class="w-full h-full border border-gray-100 bg-pink-50 rounded flex items-center justify-center">
+                                    <span class="text-2xl">❤️</span>
+                                </div>
+                            </div>
+                            <div class="card-back absolute w-full h-full bg-pink-100 rotate-y-180 backface-hidden rounded-lg border border-pink-200 flex items-center justify-center">
+                                <span class="font-bold text-gray-800 text-lg sm:text-xl">cutest</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card w-full aspect-[3/4] cursor-pointer perspective-1000 group" onclick="flipCard(this, 4)">
+                        <div class="card-inner w-full h-full relative transform-style-3d shadow-lg rounded-lg">
+                            <div class="card-front absolute w-full h-full bg-white p-2 backface-hidden rounded-lg border flex items-center justify-center">
+                                <div class="w-full h-full border border-gray-100 bg-pink-50 rounded flex items-center justify-center">
+                                    <span class="text-2xl">gift 🎁</span>
+                                </div>
+                            </div>
+                            <div class="card-back absolute w-full h-full bg-pink-100 rotate-y-180 backface-hidden rounded-lg border border-pink-200 flex items-center justify-center">
+                                <span class="font-bold text-gray-800 text-lg sm:text-xl">gift 🎁</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Next Button (Hidden initially) -->
+                <div id="next-btn-container" class="mt-8 opacity-0 transition-opacity duration-500">
+                    <button onclick="goToPage(4)" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-8 rounded-full shadow-lg animate-bounce">
+                        Continue ❤️
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 4: SANTA INTRO ================= -->
+        <div id="page-4" class="page">
+            <div class="w-full h-full flex flex-col items-center justify-center px-4">
+                <h1 class="font-christmas text-4xl text-center text-gray-800 mb-2">Merry Christmas</h1>
+                <h2 class="font-christmas text-3xl text-center text-pink-500 mb-8">to my Cutiepie</h2>
+
+                <!-- Santa Sleigh SVG -->
+                <div class="w-full max-w-xs relative cursor-pointer group" onclick="openLetter()">
+                    <!-- Tap Hint -->
+                    <div class="absolute -top-8 right-0 bg-white px-3 py-1 rounded-full shadow border border-gray-200 animate-bounce">
+                        <span class="text-xs font-bold text-gray-600">Tap to read</span>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl shadow-xl transform transition group-hover:scale-105 duration-300 border-2 border-pink-100">
+                         <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Sleigh Body -->
+                            <path d="M40 100 Q40 130 80 130 L160 130 Q180 130 190 110 L180 80 L60 80 Z" fill="#b91c1c" />
+                            <path d="M40 100 L30 80 L60 80" fill="#991b1b" />
+                            <!-- Runners -->
+                            <path d="M30 135 L170 135 Q190 135 195 120" fill="none" stroke="#fbbf24" stroke-width="4" stroke-linecap="round"/>
+                            <path d="M60 130 L60 135 M140 130 L140 135" fill="none" stroke="#fbbf24" stroke-width="4"/>
+                            
+                            <!-- Bag -->
+                            <path d="M120 80 Q120 40 150 50 Q170 60 160 80" fill="#d97706"/>
+                            
+                            <!-- Santa -->
+                            <circle cx="90" cy="70" r="20" fill="#ef4444"/> <!-- Body -->
+                            <circle cx="90" cy="50" r="15" fill="#fecaca"/> <!-- Head -->
+                            <rect x="75" y="35" width="30" height="10" fill="#ffffff" rx="5"/> <!-- Hat Brim -->
+                            <path d="M75 35 Q90 10 105 35" fill="#ef4444"/> <!-- Hat Top -->
+                            <circle cx="105" cy="35" r="4" fill="#ffffff"/> <!-- Pom -->
+                            <circle cx="90" cy="55" r="10" fill="#ffffff"/> <!-- Beard -->
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= LETTER OVERLAY ================= -->
+        <div id="letter-overlay" class="absolute bottom-0 left-0 w-full h-full bg-black/40 z-50 translate-y-full transition-transform duration-700 ease-out flex items-end">
+            <div class="w-full h-[85%] bg-white rounded-t-3xl p-6 shadow-2xl relative flex flex-col">
+                <!-- Close Button -->
+                <button onclick="closeLetter()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+
+                <!-- Decoration -->
+                <div class="absolute -top-12 left-1/2 transform -translate-x-1/2 w-24 h-24 bg-white rounded-full p-2 shadow-lg border-4 border-pink-100 flex items-center justify-center">
+                    <span class="text-4xl">🎄</span>
+                </div>
+
+                <div class="mt-12 overflow-y-auto letter-scroll flex-1 text-center px-2">
+                    <h2 class="font-christmas text-3xl text-red-500 mb-4">Merry Christmas<br>to my Cutiepie</h2>
+                    
+                    <div class="space-y-4 text-gray-700 font-medium leading-relaxed">
+                        <p class="text-lg text-pink-600 font-bold">This Christmas, I just want you to know how special you are to me.</p>
+                        
+                        <p>You are not just a part of my life, you are the reason behind so many smiles and little moments.</p>
+                        
+                        <div class="py-2">
+                            <svg class="w-8 h-8 mx-auto text-pink-400 animate-pulse" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>
+                        </div>
+
+                        <p>I may not be perfect, but I promise one thing:</p>
+                        <p class="italic bg-blue-50 p-4 rounded-xl border border-blue-100">
+                            "Whenever you share a wish, a dream, or even a silly thought, I'll always try my best to be there for you."
+                        </p>
+                        
+                        <p class="text-xl font-christmas text-red-500 mt-6">Thank you for being you. ❤️ 🎄</p>
+                    </div>
+                    
+                    <div class="mt-8 mb-4">
+                        <button onclick="closeLetter()" class="text-sm text-gray-400 underline hover:text-gray-600">Close letter</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Audio (Optional - commented out as browser policy often blocks autoplay) -->
+    <!-- <audio id="bg-music" loop>
+        <source src="path_to_christmas_music.mp3" type="audio/mpeg">
+    </audio> -->
+
+    <script>
+        // --- State Management ---
+        let currentPage = 1;
+        let flippedCards = 0;
+        const totalCards = 5;
+
+        function goToPage(pageNum) {
+            // Hide current
+            document.getElementById(`page-${currentPage}`).classList.remove('active');
+            
+            setTimeout(() => {
+                document.getElementById(`page-${currentPage}`).classList.add('hidden-page');
+                
+                // Show next
+                currentPage = pageNum;
+                const nextPage = document.getElementById(`page-${currentPage}`);
+                nextPage.classList.remove('hidden-page');
+                // Trigger reflow
+                void nextPage.offsetWidth;
+                nextPage.classList.add('active');
+            }, 500); // Wait for transition
+        }
+
+        function flipCard(card, index) {
+            if (card.classList.contains('flipped')) return;
+            
+            card.classList.add('flipped');
+            flippedCards++;
+
+            // Check if all cards are flipped
+            if (flippedCards === totalCards) {
+                setTimeout(() => {
+                    const btnContainer = document.getElementById('next-btn-container');
+                    btnContainer.classList.remove('opacity-0');
+                }, 500);
+            }
+        }
+
+        function openLetter() {
+            document.getElementById('letter-overlay').classList.remove('translate-y-full');
+        }
+
+        function closeLetter() {
+            document.getElementById('letter-overlay').classList.add('translate-y-full');
+        }
+
+        // --- Snow Effect ---
+        const canvas = document.getElementById('snow-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+
+        const flakes = [];
+        const flakeCount = 100;
+
+        class Flake {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 3 + 1;
+                this.speedY = Math.random() * 1 + 0.5;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.opacity = Math.random() * 0.5 + 0.3;
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+
+                if (this.y > height) {
+                    this.y = 0;
+                    this.x = Math.random() * width;
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(173, 216, 230, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initSnow() {
+            for (let i = 0; i < flakeCount; i++) {
+                flakes.push(new Flake());
+            }
+            animateSnow();
+        }
+
+        function animateSnow() {
+            ctx.clearRect(0, 0, width, height);
+            flakes.forEach(flake => {
+                flake.update();
+                flake.draw();
+            });
+            requestAnimationFrame(animateSnow);
+        }
+
+        window.addEventListener('resize', () => {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        });
+
+        initSnow();
+    </script>
+</body>
+</html>
